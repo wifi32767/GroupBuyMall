@@ -1,6 +1,6 @@
 SET NAMES utf8mb4;
-CREATE database if NOT EXISTS `group_buy_market` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
-use `group_buy_market`;
+CREATE database if NOT EXISTS `group_buy_mall` default character set utf8mb4 collate utf8mb4_0900_ai_ci;
+use `group_buy_mall`;
 
 DROP TABLE IF EXISTS `crowd_tags`;
 CREATE TABLE `crowd_tags` (

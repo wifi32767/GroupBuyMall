@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "asdasd"
+      TZ: Asia/Shanghai
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
