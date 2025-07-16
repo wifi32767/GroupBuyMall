@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 @Data
@@ -12,15 +13,25 @@ import java.util.Date;
 @NoArgsConstructor
 public class CrowdTagsDetail {
 
-    /** 自增ID */
+    /**
+     * 自增ID
+     */
     private Long id;
-    /** 人群ID */
+    /**
+     * 人群ID
+     */
     private String tagId;
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
     private String userId;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
 }

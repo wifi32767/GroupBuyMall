@@ -33,6 +33,7 @@ public interface GroupBuyOrderListDao {
     /**
      * 查询超时未支付订单列表
      * 条件：当前时间不在活动时间范围内、状态为0（初始锁定）、out_trade_time为空
+     *
      * @return 超时未支付订单列表，限制10条
      */
     List<GroupBuyOrderList> queryTimeoutUnpaidOrderList();

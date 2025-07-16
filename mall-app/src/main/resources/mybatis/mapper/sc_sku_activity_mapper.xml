@@ -12,10 +12,13 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
-    <select id="querySCSkuActivityBySCGoodsId" parameterType="com.wifi32767.infra.dao.po.SCSkuActivity" resultMap="dataMap">
+    <select id="querySCSkuActivityBySCGoodsId" parameterType="com.wifi32767.infra.dao.po.SCSkuActivity"
+            resultMap="dataMap">
         select source, channel, activity_id, goods_id
         from sc_sku_activity
-        where goods_id = #{goodsId} and source = #{source} and channel = #{channel}
+        where goods_id = #{goodsId}
+          and source = #{source}
+          and channel = #{channel}
     </select>
 
 </mapper>

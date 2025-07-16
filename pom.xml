@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,6 +30,8 @@
         <mybatis-spring-boot.version>3.0.4</mybatis-spring-boot.version>
         <fastjson.version>2.0.28</fastjson.version>
         <mysql-connector.version>8.0.33</mysql-connector.version>
+        <dom4j.version>1.6.1</dom4j.version>
+        <annotation.version>1.2</annotation.version>
     </properties>
 
     <dependencyManagement>
@@ -48,6 +50,16 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>dom4j</groupId>
+                <artifactId>dom4j</artifactId>
+                <version>${dom4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>javax.annotation-api</artifactId>
+                <version>${annotation.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

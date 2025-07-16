@@ -13,19 +13,33 @@ import java.util.Date;
 @NoArgsConstructor
 public class CrowdTags {
 
-    /** 自增ID */
+    /**
+     * 自增ID
+     */
     private Long id;
-    /** 人群ID */
+    /**
+     * 人群ID
+     */
     private String tagId;
-    /** 人群名称 */
+    /**
+     * 人群名称
+     */
     private String tagName;
-    /** 人群描述 */
+    /**
+     * 人群描述
+     */
     private String tagDesc;
-    /** 人群标签统计量 */
+    /**
+     * 人群标签统计量
+     */
     private Integer statistics;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
 }

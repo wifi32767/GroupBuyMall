@@ -1,8 +1,8 @@
 package com.wifi32767.test.infra.dao;
 
+import com.alibaba.fastjson.JSON;
 import com.wifi32767.infra.dao.GroupBuyActivityDao;
 import com.wifi32767.infra.dao.po.GroupBuyActivity;
-import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 @Slf4j
-//@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = com.wifi32767.app.Application.class)
 public class GroupBuyActivityDaoTest {
 

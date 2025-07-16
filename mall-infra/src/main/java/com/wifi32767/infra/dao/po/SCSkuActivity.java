@@ -13,19 +13,33 @@ import java.util.Date;
 @NoArgsConstructor
 public class SCSkuActivity {
 
-    /** 自增ID */
+    /**
+     * 自增ID
+     */
     private Long id;
-    /** 渠道 */
+    /**
+     * 渠道
+     */
     private String source;
-    /** 来源 */
+    /**
+     * 来源
+     */
     private String channel;
-    /** 活动ID */
+    /**
+     * 活动ID
+     */
     private Long activityId;
-    /** 商品ID */
+    /**
+     * 商品ID
+     */
     private String goodsId;
-    /** 创建时间 */
+    /**
+     * 创建时间
+     */
     private Date createTime;
-    /** 更新时间 */
+    /**
+     * 更新时间
+     */
     private Date updateTime;
 
 }

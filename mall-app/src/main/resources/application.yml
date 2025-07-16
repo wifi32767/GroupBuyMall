@@ -1,5 +1,5 @@
 spring:
   config:
-    name: group-buy-market-app
+    name: group-buy-mall-app
   profiles:
     active: dev

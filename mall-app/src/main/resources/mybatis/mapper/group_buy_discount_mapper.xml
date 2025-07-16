@@ -8,19 +8,20 @@
         <result column="discount_name" property="discountName"/>
         <result column="discount_desc" property="discountDesc"/>
         <result column="discount_type" property="discountType"/>
-        <result column="market_plan" property="marketPlan"/>
-        <result column="market_expr" property="marketExpr"/>
+        <result column="mall_plan" property="mallPlan"/>
+        <result column="mall_expr" property="mallExpr"/>
         <result column="tag_id" property="tagId"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <select id="queryGroupBuyDiscountList" resultMap="dataMap">
-        select * from group_buy_discount
+        select *
+        from group_buy_discount
     </select>
 
     <select id="queryGroupBuyActivityDiscountByDiscountId" parameterType="java.lang.String" resultMap="dataMap">
-        select discount_id, discount_name, discount_desc, discount_type, market_plan, market_expr, tag_id
+        select discount_id, discount_name, discount_desc, discount_type, mall_plan, mall_expr, tag_id
         from group_buy_discount
         where discount_id = #{discountId}
     </select>
