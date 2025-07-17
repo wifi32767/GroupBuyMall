@@ -1,5 +1,6 @@
 package com.wifi32767.domain.activity.adapter.repository;
 
+import com.wifi32767.domain.activity.model.valobject.DiscountTypeEnum;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.SkuVO;
 import com.wifi32767.infra.dao.GroupBuyActivityDao;
@@ -37,7 +38,7 @@ class ActivityRepositoryImp implements ActivityRepository {
         GroupBuyActivityDiscountVO.GroupBuyDiscount groupBuyDiscount = GroupBuyActivityDiscountVO.GroupBuyDiscount.builder()
                 .discountName(groupBuyDiscountRes.getDiscountName())
                 .discountDesc(groupBuyDiscountRes.getDiscountDesc())
-                .discountType(groupBuyDiscountRes.getDiscountType())
+                .discountType(DiscountTypeEnum.get(groupBuyDiscountRes.getDiscountType()))
                 .mallPlan(groupBuyDiscountRes.getMallPlan())
                 .mallExpr(groupBuyDiscountRes.getMallExpr())
                 .tagId(groupBuyDiscountRes.getTagId())
