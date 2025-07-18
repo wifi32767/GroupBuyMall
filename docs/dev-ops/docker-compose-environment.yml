@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 services:
   mysql:
     image: mysql:latest
@@ -7,10 +7,19 @@ services:
       - "13306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "asdasd"
+      MYSQL_DATABASE: "group_buy_mall"
       TZ: Asia/Shanghai
     networks:
       - my-network
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - 16379:6379
+    networks:
+      - my-network
 networks:
   my-network:
     driver: bridge

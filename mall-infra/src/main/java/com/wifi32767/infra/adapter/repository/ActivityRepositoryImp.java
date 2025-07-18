@@ -1,5 +1,6 @@
-package com.wifi32767.domain.activity.adapter.repository;
+package com.wifi32767.infra.adapter.repository;
 
+import com.wifi32767.domain.activity.adapter.repository.ActivityRepository;
 import com.wifi32767.domain.activity.model.valobject.DiscountTypeEnum;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.SkuVO;

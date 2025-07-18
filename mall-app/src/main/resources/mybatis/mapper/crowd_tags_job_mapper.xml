@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wifi32767.infra.">
+<mapper namespace="com.wifi32767.infra.dao.CrowdTagsJobDao">
 
     <resultMap id="dataMap" type="com.wifi32767.infra.dao.po.CrowdTagsJob">
         <id column="id" property="id"/>
