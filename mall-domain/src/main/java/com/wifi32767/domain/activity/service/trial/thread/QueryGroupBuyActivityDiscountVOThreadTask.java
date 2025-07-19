@@ -2,6 +2,7 @@ package com.wifi32767.domain.activity.service.trial.thread;
 
 import com.wifi32767.domain.activity.adapter.repository.ActivityRepository;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
+import com.wifi32767.domain.activity.model.valobject.SCSkuActivityVO;
 
 import java.util.concurrent.Callable;
 
@@ -22,20 +23,33 @@ public class QueryGroupBuyActivityDiscountVOThreadTask implements Callable<Group
      */
     private final String channel;
 
+
+    /**
+     * 商品ID
+     */
+    private final String goodsId;
+
+
     /**
      * 活动仓储
      */
     private final ActivityRepository activityRepository;
 
-    public QueryGroupBuyActivityDiscountVOThreadTask(String source, String channel, ActivityRepository activityRepository) {
+    public QueryGroupBuyActivityDiscountVOThreadTask(String source, String channel, String goodsId, ActivityRepository activityRepository) {
         this.source = source;
         this.channel = channel;
+        this.goodsId = goodsId;
         this.activityRepository = activityRepository;
     }
 
     @Override
     public GroupBuyActivityDiscountVO call() throws Exception {
-        return activityRepository.queryGroupBuyActivityDiscountVO(source, channel);
+        SCSkuActivityVO scSkuActivityVO = activityRepository.querySCSkuActivityBySCGoodsId(source, channel, goodsId);
+        if (null == scSkuActivityVO) {
+            return null;
+        }
+
+        return activityRepository.queryGroupBuyActivityDiscountVO(scSkuActivityVO.getActivityId());
     }
 
 }
