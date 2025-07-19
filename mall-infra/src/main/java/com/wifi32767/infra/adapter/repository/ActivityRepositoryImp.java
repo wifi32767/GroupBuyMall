@@ -13,6 +13,8 @@ import com.wifi32767.infra.dao.po.GroupBuyActivity;
 import com.wifi32767.infra.dao.po.GroupBuyDiscount;
 import com.wifi32767.infra.dao.po.SCSkuActivity;
 import com.wifi32767.infra.dao.po.Sku;
+import com.wifi32767.infra.redis.RedisService;
+import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -24,11 +26,14 @@ class ActivityRepositoryImp implements ActivityRepository {
     private GroupBuyActivityDao groupBuyActivityDao;
     @Resource
     private GroupBuyDiscountDao groupBuyDiscountDao;
-
     @Resource
     private SkuDao skuDao;
     @Resource
     private SCSkuActivityDao skuActivityDao;
+
+    @Resource
+    private RedisService redisService;
+
 
 
     @Override
@@ -95,5 +100,12 @@ class ActivityRepositoryImp implements ActivityRepository {
                 .build();
     }
 
+    @Override
+    public boolean isTagCrowdRange(String tagId, String userId) {
+        RBitSet bitSet = redisService.getBitSet(tagId);
+        if (!bitSet.isExists()) return true;
+        // 判断用户是否存在人群中
+        return bitSet.get(redisService.getIndexFromUserId(userId));
+    }
 
 }

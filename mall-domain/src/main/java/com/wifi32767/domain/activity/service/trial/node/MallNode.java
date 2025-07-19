@@ -31,7 +31,7 @@ public class MallNode extends AbstractGroupBuyMallSupport<MallProductEntity, Def
     @Resource
     private ThreadPoolExecutor threadPoolExecutor;
     @Resource
-    private EndNode endNode;
+    private TagNode tagNode;
     @Resource
     private ErrorNode errorNode;
 
@@ -82,7 +82,7 @@ public class MallNode extends AbstractGroupBuyMallSupport<MallProductEntity, Def
 
     @Override
     public StrategyHandler<MallProductEntity, DefaultActivityStrategyFactory.DynamicContext, TrialBalanceEntity> get(MallProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
-        return endNode;
+        return tagNode;
     }
 
 }

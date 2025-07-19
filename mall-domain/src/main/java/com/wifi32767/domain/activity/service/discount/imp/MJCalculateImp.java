@@ -1,5 +1,6 @@
 package com.wifi32767.domain.activity.service.discount.imp;
 
+import com.wifi32767.common.Constants;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.service.discount.AbstractDiscountCalculateService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class MJCalculateImp extends AbstractDiscountCalculateService {
 
         // 折扣表达式 - 100,10 满100减10元
         String mallExpr = discount.getMallExpr();
-        String[] split = mallExpr.split(",");
+        String[] split = mallExpr.split(Constants.SPLIT);
         BigDecimal x = new BigDecimal(split[0].trim());
         BigDecimal y = new BigDecimal(split[1].trim());
 

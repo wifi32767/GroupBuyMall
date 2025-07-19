@@ -31,4 +31,29 @@ public class IndexGroupBuyMallServiceTest {
         log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
     }
 
+    @Test
+    public void test_indexMarketTrial_no_tag() throws Exception {
+        MallProductEntity mallProductEntity = new MallProductEntity();
+        mallProductEntity.setUserId("aaa");
+        mallProductEntity.setSource("s1");
+        mallProductEntity.setChannel("c1");
+        mallProductEntity.setGoodsId("1111");
+
+        TrialBalanceEntity trialBalanceEntity = indexGroupBuyMallService.indexMallTrial(mallProductEntity);
+        log.info("请求参数:{}", JSON.toJSONString(mallProductEntity));
+        log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
+    }
+
+    @Test
+    public void test_indexMarketTrial_error() throws Exception {
+        MallProductEntity mallProductEntity = new MallProductEntity();
+        mallProductEntity.setUserId("aaa");
+        mallProductEntity.setSource("s1");
+        mallProductEntity.setChannel("c1");
+        mallProductEntity.setGoodsId("1112");
+
+        TrialBalanceEntity trialBalanceEntity = indexGroupBuyMallService.indexMallTrial(mallProductEntity);
+        log.info("请求参数:{}", JSON.toJSONString(mallProductEntity));
+        log.info("返回结果:{}", JSON.toJSONString(trialBalanceEntity));
+    }
 }
