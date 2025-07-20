@@ -1,6 +1,9 @@
 package com.wifi32767.domain.activity.service.trial.node;
 
+import com.wifi32767.common.enums.ResponseCode;
 import com.wifi32767.common.frame.tree.StrategyHandler;
+import com.wifi32767.common.exceptions.AppException;
+import com.alibaba.fastjson.JSON;
 import com.wifi32767.domain.activity.model.entity.MallProductEntity;
 import com.wifi32767.domain.activity.model.entity.TrialBalanceEntity;
 import com.wifi32767.domain.activity.service.trial.AbstractGroupBuyMallSupport;
@@ -22,6 +25,22 @@ public class SwitchNode extends AbstractGroupBuyMallSupport<MallProductEntity, D
 
     @Override
     public TrialBalanceEntity doApply(MallProductEntity requestParameter, DefaultActivityStrategyFactory.DynamicContext dynamicContext) throws Exception {
+        log.info("拼团商品查询试算服务-SwitchNode userId:{} requestParameter:{}", requestParameter.getUserId(), JSON.toJSONString(requestParameter));
+
+        // 根据用户ID切量
+        String userId = requestParameter.getUserId();
+
+        // 判断是否降级
+        if (repository.downgradeSwitch()) {
+            log.info("拼团活动降级拦截 {}", userId);
+            throw new AppException(ResponseCode.E0003.getCode(), ResponseCode.E0003.getInfo());
+        }
+
+        // 切量范围判断
+        if (!repository.cutRange(userId)) {
+            log.info("拼团活动切量拦截 {}", userId);
+            throw new AppException(ResponseCode.E0004.getCode(), ResponseCode.E0004.getInfo());
+        }
         return router(requestParameter, dynamicContext);
     }
 
