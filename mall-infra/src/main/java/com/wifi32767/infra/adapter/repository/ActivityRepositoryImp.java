@@ -13,8 +13,8 @@ import com.wifi32767.infra.dao.po.GroupBuyActivity;
 import com.wifi32767.infra.dao.po.GroupBuyDiscount;
 import com.wifi32767.infra.dao.po.SCSkuActivity;
 import com.wifi32767.infra.dao.po.Sku;
-import com.wifi32767.infra.redis.RedisService;
 import com.wifi32767.infra.dcc.DCCService;
+import com.wifi32767.infra.redis.RedisService;
 import org.redisson.api.RBitSet;
 import org.springframework.stereotype.Repository;
 

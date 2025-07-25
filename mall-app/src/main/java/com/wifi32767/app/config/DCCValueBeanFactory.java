@@ -3,10 +3,10 @@ package com.wifi32767.app.config;
 import com.wifi32767.common.Constants;
 import com.wifi32767.common.annotation.DCCValue;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RBucket;
 import org.redisson.api.RTopic;
 import org.redisson.api.RedissonClient;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
@@ -25,7 +25,7 @@ import java.util.Map;
 @Configuration
 public class DCCValueBeanFactory implements BeanPostProcessor {
 
-    private static final String BASE_CONFIG_PATH = "group_buy_market_dcc_";
+    private static final String BASE_CONFIG_PATH = "group_buy_mall_dcc_";
 
     private final RedissonClient redissonClient;
 
@@ -37,7 +37,7 @@ public class DCCValueBeanFactory implements BeanPostProcessor {
 
     @Bean("dccTopic")
     public RTopic dccRedisTopicListener(RedissonClient redissonClient) {
-        RTopic topic = redissonClient.getTopic("group_buy_market_dcc");
+        RTopic topic = redissonClient.getTopic("group_buy_mall_dcc");
         topic.addListener(String.class, (charSequence, s) -> {
             String[] split = s.split(Constants.SPLIT);
 

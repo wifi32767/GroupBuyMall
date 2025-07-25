@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 @Slf4j
 @RestController()
 @CrossOrigin("*")
-@RequestMapping("/api/v1/gbm/dcc/")
+@RequestMapping("/api/dcc/")
 public class DCCController {
 
     @Resource

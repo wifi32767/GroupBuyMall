@@ -1,5 +1,6 @@
 package com.wifi32767.common.exceptions;
 
+import com.wifi32767.common.enums.ResponseCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,6 +34,11 @@ public class AppException extends RuntimeException {
         this.info = message;
     }
 
+    public AppException(ResponseCode responseCode) {
+        this.code = responseCode.getCode();
+        this.info = responseCode.getInfo();
+    }
+
     public AppException(String code, String message, Throwable cause) {
         this.code = code;
         this.info = message;
@@ -41,7 +47,7 @@ public class AppException extends RuntimeException {
 
     @Override
     public String toString() {
-        return "cn.bugstack.x.api.types.exception.XApiException{" +
+        return "com.wifi32767.exception.AppException{" +
                 "code='" + code + '\'' +
                 ", info='" + info + '\'' +
                 '}';

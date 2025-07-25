@@ -7,11 +7,15 @@ import com.wifi32767.domain.activity.model.valobject.SCSkuActivityVO;
 import java.util.concurrent.Callable;
 
 /**
- * @author Fuzhengwei bugstack.cn @小傅哥
  * @description 查询营销配置任务
- * @create 2024-12-21 09:46
  */
 public class QueryGroupBuyActivityDiscountVOThreadTask implements Callable<GroupBuyActivityDiscountVO> {
+
+
+    /**
+     * 活动ID
+     */
+    private final Long activityId;
 
     /**
      * 来源
@@ -35,7 +39,8 @@ public class QueryGroupBuyActivityDiscountVOThreadTask implements Callable<Group
      */
     private final ActivityRepository activityRepository;
 
-    public QueryGroupBuyActivityDiscountVOThreadTask(String source, String channel, String goodsId, ActivityRepository activityRepository) {
+    public QueryGroupBuyActivityDiscountVOThreadTask(Long activityId, String source, String channel, String goodsId, ActivityRepository activityRepository) {
+        this.activityId = activityId;
         this.source = source;
         this.channel = channel;
         this.goodsId = goodsId;
@@ -44,12 +49,16 @@ public class QueryGroupBuyActivityDiscountVOThreadTask implements Callable<Group
 
     @Override
     public GroupBuyActivityDiscountVO call() throws Exception {
-        SCSkuActivityVO scSkuActivityVO = activityRepository.querySCSkuActivityBySCGoodsId(source, channel, goodsId);
-        if (null == scSkuActivityVO) {
-            return null;
+        // 判断是否存在可用的活动ID
+        Long availableActivityId = activityId;
+        if (null == activityId) {
+            // 查询渠道商品活动配置关联配置
+            SCSkuActivityVO scSkuActivityVO = activityRepository.querySCSkuActivityBySCGoodsId(source, channel, goodsId);
+            if (null == scSkuActivityVO) return null;
+            availableActivityId = scSkuActivityVO.getActivityId();
         }
-
-        return activityRepository.queryGroupBuyActivityDiscountVO(scSkuActivityVO.getActivityId());
+        // 查询活动配置
+        return activityRepository.queryGroupBuyActivityDiscountVO(availableActivityId);
     }
 
 }

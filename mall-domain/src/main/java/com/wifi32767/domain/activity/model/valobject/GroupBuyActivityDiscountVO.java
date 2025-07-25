@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
-
 import java.util.Date;
 import java.util.Objects;
 
@@ -83,7 +82,7 @@ public class GroupBuyActivityDiscountVO {
      * 只要存在这样一个值，那么首次获得的默认值就是 false
      */
     public boolean isVisible() {
-        if(StringUtils.isBlank(this.tagScope)) return TagScopeEnumVO.VISIBLE.getAllow();
+        if (StringUtils.isBlank(this.tagScope)) return TagScopeEnumVO.VISIBLE.getAllow();
         String[] split = this.tagScope.split(Constants.SPLIT);
         if (split.length > 0 && Objects.equals(split[0], "1") && StringUtils.isNotBlank(split[0])) {
             return TagScopeEnumVO.VISIBLE.getRefuse();
@@ -96,7 +95,7 @@ public class GroupBuyActivityDiscountVO {
      * 只要存在这样一个值，那么首次获得的默认值就是 false
      */
     public boolean isEnable() {
-        if(StringUtils.isBlank(this.tagScope)) return TagScopeEnumVO.VISIBLE.getAllow();
+        if (StringUtils.isBlank(this.tagScope)) return TagScopeEnumVO.VISIBLE.getAllow();
         String[] split = this.tagScope.split(Constants.SPLIT);
         if (split.length == 2 && Objects.equals(split[1], "2") && StringUtils.isNotBlank(split[1])) {
             return TagScopeEnumVO.ENABLE.getRefuse();

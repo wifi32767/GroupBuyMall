@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 public class MallProductEntity {
 
     /**
+     * 活动ID
+     */
+    private Long activityId;
+    /**
      * 用户ID
      */
     private String userId;

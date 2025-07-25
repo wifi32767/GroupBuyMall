@@ -1,9 +1,9 @@
 package com.wifi32767.domain.activity.service.trial.node;
 
-import com.wifi32767.common.enums.ResponseCode;
-import com.wifi32767.common.frame.tree.StrategyHandler;
-import com.wifi32767.common.exceptions.AppException;
 import com.alibaba.fastjson.JSON;
+import com.wifi32767.common.enums.ResponseCode;
+import com.wifi32767.common.exceptions.AppException;
+import com.wifi32767.common.frame.tree.StrategyHandler;
 import com.wifi32767.domain.activity.model.entity.MallProductEntity;
 import com.wifi32767.domain.activity.model.entity.TrialBalanceEntity;
 import com.wifi32767.domain.activity.service.trial.AbstractGroupBuyMallSupport;

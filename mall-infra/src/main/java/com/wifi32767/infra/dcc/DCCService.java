@@ -1,7 +1,6 @@
 package com.wifi32767.infra.dcc;
 
 import com.wifi32767.common.annotation.DCCValue;
-import lombok.Data;
 import org.springframework.stereotype.Service;
 
 @Service

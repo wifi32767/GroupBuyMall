@@ -32,7 +32,7 @@ public class IndexGroupBuyMallServiceTest {
     }
 
     @Test
-    public void test_indexMarketTrial_no_tag() throws Exception {
+    public void test_indexMallTrial_no_tag() throws Exception {
         MallProductEntity mallProductEntity = new MallProductEntity();
         mallProductEntity.setUserId("aaa");
         mallProductEntity.setSource("s1");
@@ -45,7 +45,7 @@ public class IndexGroupBuyMallServiceTest {
     }
 
     @Test
-    public void test_indexMarketTrial_error() throws Exception {
+    public void test_indexMallTrial_error() throws Exception {
         MallProductEntity mallProductEntity = new MallProductEntity();
         mallProductEntity.setUserId("aaa");
         mallProductEntity.setSource("s1");
