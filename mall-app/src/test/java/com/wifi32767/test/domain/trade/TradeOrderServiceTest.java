@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.service.IndexGroupBuyMallService;
-import com.wifi32767.domain.trade.service.TradeOrderService;
+import com.wifi32767.domain.trade.service.TradeLockOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +19,7 @@ public class TradeOrderServiceTest {
     private IndexGroupBuyMallService indexGroupBuyMallService;
 
     @Resource
-    private TradeOrderService tradeOrderService;
+    private TradeLockOrderService tradeLockOrderService;
 
     @Test
     public void test_lockMallPayOrder() throws Exception {
@@ -43,14 +43,14 @@ public class TradeOrderServiceTest {
         GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = trialBalanceEntity.getGroupBuyActivityDiscountVO();
 
         // 查询 outTradeNo 是否已经存在交易记录
-        MallPayOrderEntity mallPayOrderEntityOld = tradeOrderService.queryNoPayMallPayOrderByOutTradeNo(userId, outTradeNo);
+        MallPayOrderEntity mallPayOrderEntityOld = tradeLockOrderService.queryNoPayMallPayOrderByOutTradeNo(userId, outTradeNo);
         if (null != mallPayOrderEntityOld) {
             log.info("测试结果(Old):{}", JSON.toJSONString(mallPayOrderEntityOld));
             return;
         }
 
         // 2. 锁定，营销预支付订单；商品下单前，预购锁定。
-        MallPayOrderEntity mallPayOrderEntityNew = tradeOrderService.lockMallPayOrder(
+        MallPayOrderEntity mallPayOrderEntityNew = tradeLockOrderService.lockMallPayOrder(
                 UserEntity.builder().userId(userId).build(),
                 PayActivityEntity.builder()
                         .teamId(null)

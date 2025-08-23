@@ -15,6 +15,10 @@ import java.math.BigDecimal;
 public class MallPayOrderEntity {
 
     /**
+     * 拼单组队ID
+     */
+    private String teamId;
+    /**
      * 预购订单ID
      */
     private String orderId;

@@ -1,11 +1,11 @@
 package com.wifi32767.domain.trade.service;
 
 import com.wifi32767.common.frame.link.multi.chain.BusinessLinkedList;
-import com.wifi32767.domain.activity.adapter.repository.TradeRepository;
 import com.wifi32767.domain.activity.model.aggregate.GroupBuyOrderAggregate;
 import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
-import com.wifi32767.domain.trade.service.factory.TradeRuleFilterFactory;
+import com.wifi32767.domain.trade.adapter.repository.TradeRepository;
+import com.wifi32767.domain.trade.service.lock.factory.TradeRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 
 @Slf4j
 @Service
-public class TradeOrderServiceImp implements TradeOrderService {
+public class TradeLockOrderServiceImp implements TradeLockOrderService {
 
     @Resource
     private TradeRepository repository;

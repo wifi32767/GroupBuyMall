@@ -7,7 +7,7 @@ import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 import com.wifi32767.domain.activity.service.IndexGroupBuyMallService;
-import com.wifi32767.domain.trade.service.TradeOrderService;
+import com.wifi32767.domain.trade.service.TradeLockOrderService;
 import com.wifi32767.interfaces.dto.LockMallPayOrderRequestDTO;
 import com.wifi32767.interfaces.dto.LockMallPayOrderResponseDTO;
 import com.wifi32767.interfaces.response.Response;
@@ -31,7 +31,7 @@ public class MallTradeController {
     private IndexGroupBuyMallService indexGroupBuyMallService;
 
     @Resource
-    private TradeOrderService tradeOrderService;
+    private TradeLockOrderService tradeLockOrderService;
 
     /**
      * 拼团营销锁单
@@ -58,7 +58,7 @@ public class MallTradeController {
             }
 
             // 查询 outTradeNo 是否已经存在交易记录
-            MallPayOrderEntity mallPayOrderEntity = tradeOrderService.queryNoPayMallPayOrderByOutTradeNo(userId, outTradeNo);
+            MallPayOrderEntity mallPayOrderEntity = tradeLockOrderService.queryNoPayMallPayOrderByOutTradeNo(userId, outTradeNo);
             if (null != mallPayOrderEntity) {
                 LockMallPayOrderResponseDTO lockMallPayOrderResponseDTO = LockMallPayOrderResponseDTO.builder()
                         .orderId(mallPayOrderEntity.getOrderId())
@@ -76,7 +76,7 @@ public class MallTradeController {
 
             // 判断拼团锁单是否完成了目标
             if (null != teamId) {
-                GroupBuyProgressVO groupBuyProgressVO = tradeOrderService.queryGroupBuyProgress(teamId);
+                GroupBuyProgressVO groupBuyProgressVO = tradeLockOrderService.queryGroupBuyProgress(teamId);
                 if (null != groupBuyProgressVO && Objects.equals(groupBuyProgressVO.getTargetCount(), groupBuyProgressVO.getLockCount())) {
                     log.info("交易锁单拦截-拼单目标已达成:{} {}", userId, teamId);
                     return Response.<LockMallPayOrderResponseDTO>builder()
@@ -105,7 +105,7 @@ public class MallTradeController {
             GroupBuyActivityDiscountVO groupBuyActivityDiscountVO = trialBalanceEntity.getGroupBuyActivityDiscountVO();
 
             // 锁单
-            mallPayOrderEntity = tradeOrderService.lockMallPayOrder(
+            mallPayOrderEntity = tradeLockOrderService.lockMallPayOrder(
                     UserEntity.builder().userId(userId).build(),
                     PayActivityEntity.builder()
                             .teamId(teamId)

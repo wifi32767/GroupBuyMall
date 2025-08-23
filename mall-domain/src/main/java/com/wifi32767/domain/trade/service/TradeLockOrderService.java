@@ -9,7 +9,7 @@ import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 /**
  * @description 交易订单服务接口
  */
-public interface TradeOrderService {
+public interface TradeLockOrderService {
 
     /**
      * 查询，未被支付消费完成的营销优惠订单
