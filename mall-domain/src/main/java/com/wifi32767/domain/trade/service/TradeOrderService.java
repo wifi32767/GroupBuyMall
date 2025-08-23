@@ -36,6 +36,6 @@ public interface TradeOrderService {
      * @param payDiscountEntity 拼团，支付优惠实体对象
      * @return 拼团，预购订单营销实体对象
      */
-    MallPayOrderEntity lockMallPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity);
+    MallPayOrderEntity lockMallPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception;
 
 }

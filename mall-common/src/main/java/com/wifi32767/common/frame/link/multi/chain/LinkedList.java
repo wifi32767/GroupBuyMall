@@ -134,6 +134,10 @@ public class LinkedList<E> implements Link<E> {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     protected static class Node<E> {
 
         E item;
@@ -146,10 +150,6 @@ public class LinkedList<E> implements Link<E> {
             this.prev = prev;
         }
 
-    }
-
-    public String getName() {
-        return name;
     }
 
 }

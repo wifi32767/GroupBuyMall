@@ -3,10 +3,9 @@ package com.wifi32767.common.frame.link.multi.chain;
 import com.wifi32767.common.frame.link.multi.handler.LogicHandler;
 
 /**
- *
  * @description 业务链路
  */
-public class BusinessLinkedList<T, D, R> extends LinkedList<LogicHandler<T, D, R>> implements LogicHandler<T, D, R>{
+public class BusinessLinkedList<T, D, R> extends LinkedList<LogicHandler<T, D, R>> implements LogicHandler<T, D, R> {
 
     public BusinessLinkedList(String name) {
         super(name);

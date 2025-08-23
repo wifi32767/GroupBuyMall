@@ -1,12 +1,11 @@
 package com.wifi32767.domain.trade.service;
 
+import com.wifi32767.common.frame.link.multi.chain.BusinessLinkedList;
 import com.wifi32767.domain.activity.adapter.repository.TradeRepository;
 import com.wifi32767.domain.activity.model.aggregate.GroupBuyOrderAggregate;
-import com.wifi32767.domain.activity.model.entity.MallPayOrderEntity;
-import com.wifi32767.domain.activity.model.entity.PayActivityEntity;
-import com.wifi32767.domain.activity.model.entity.PayDiscountEntity;
-import com.wifi32767.domain.activity.model.entity.UserEntity;
+import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
+import com.wifi32767.domain.trade.service.factory.TradeRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +17,9 @@ public class TradeOrderServiceImp implements TradeOrderService {
 
     @Resource
     private TradeRepository repository;
+
+    @Resource
+    private BusinessLinkedList<TradeRuleCommandEntity, TradeRuleFilterFactory.DynamicContext, TradeRuleFilterBackEntity> tradeRuleFilter;
 
     @Override
     public MallPayOrderEntity queryNoPayMallPayOrderByOutTradeNo(String userId, String outTradeNo) {
@@ -32,14 +34,24 @@ public class TradeOrderServiceImp implements TradeOrderService {
     }
 
     @Override
-    public MallPayOrderEntity lockMallPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) {
+    public MallPayOrderEntity lockMallPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception {
         log.info("拼团交易-锁定营销优惠支付订单:{} activityId:{} goodsId:{}", userEntity.getUserId(), payActivityEntity.getActivityId(), payDiscountEntity.getGoodsId());
+        // 交易规则过滤
+        TradeRuleFilterBackEntity tradeRuleFilterBackEntity = tradeRuleFilter.apply(TradeRuleCommandEntity.builder()
+                        .activityId(payActivityEntity.getActivityId())
+                        .userId(userEntity.getUserId())
+                        .build(),
+                new TradeRuleFilterFactory.DynamicContext());
+
+        // 已参与拼团量 - 用于构建数据库唯一索引使用，确保用户只能在一个活动上参与固定的次数
+        Integer userTakeOrderCount = tradeRuleFilterBackEntity.getUserTakeOrderCount();
 
         // 构建聚合对象
         GroupBuyOrderAggregate groupBuyOrderAggregate = GroupBuyOrderAggregate.builder()
                 .userEntity(userEntity)
                 .payActivityEntity(payActivityEntity)
                 .payDiscountEntity(payDiscountEntity)
+                .userTakeOrderCount(userTakeOrderCount)
                 .build();
 
         // 锁定聚合订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）

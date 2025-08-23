@@ -1,4 +1,164 @@
 package com.wifi32767.infra.adapter.repository;
 
-public class TradeRepositoryImp {
+import com.wifi32767.common.Constants;
+import com.wifi32767.common.enums.ActivityStatusEnumVO;
+import com.wifi32767.common.enums.ResponseCode;
+import com.wifi32767.common.exceptions.AppException;
+import com.wifi32767.domain.activity.adapter.repository.TradeRepository;
+import com.wifi32767.domain.activity.model.aggregate.GroupBuyOrderAggregate;
+import com.wifi32767.domain.activity.model.entity.*;
+import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
+import com.wifi32767.domain.activity.model.valobject.TradeOrderStatusEnumVO;
+import com.wifi32767.infra.dao.GroupBuyActivityDao;
+import com.wifi32767.infra.dao.GroupBuyOrderDao;
+import com.wifi32767.infra.dao.GroupBuyOrderListDao;
+import com.wifi32767.infra.dao.po.GroupBuyActivity;
+import com.wifi32767.infra.dao.po.GroupBuyOrder;
+import com.wifi32767.infra.dao.po.GroupBuyOrderList;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+
+@Slf4j
+@Repository
+public class TradeRepositoryImp implements TradeRepository {
+    @Resource
+    private GroupBuyActivityDao groupBuyActivityDao;
+
+    @Resource
+    private GroupBuyOrderDao groupBuyOrderDao;
+    @Resource
+    private GroupBuyOrderListDao groupBuyOrderListDao;
+
+    @Override
+    public MallPayOrderEntity queryMallPayOrderEntityByOutTradeNo(String userId, String outTradeNo) {
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setUserId(userId);
+        groupBuyOrderListReq.setOutTradeNo(outTradeNo);
+        GroupBuyOrderList groupBuyOrderListRes = groupBuyOrderListDao.queryGroupBuyOrderRecordByOutTradeNo(groupBuyOrderListReq);
+        if (null == groupBuyOrderListRes) return null;
+
+        return MallPayOrderEntity.builder()
+                .orderId(groupBuyOrderListRes.getOrderId())
+                .deductionPrice(groupBuyOrderListRes.getDeductionPrice())
+                .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.valueOf(groupBuyOrderListRes.getStatus()))
+                .build();
+    }
+
+    @Transactional(timeout = 500)
+    @Override
+    public MallPayOrderEntity lockMallPayOrder(GroupBuyOrderAggregate groupBuyOrderAggregate) {
+        // 聚合对象信息
+        UserEntity userEntity = groupBuyOrderAggregate.getUserEntity();
+        PayActivityEntity payActivityEntity = groupBuyOrderAggregate.getPayActivityEntity();
+        PayDiscountEntity payDiscountEntity = groupBuyOrderAggregate.getPayDiscountEntity();
+        Integer userTakeOrderCount = groupBuyOrderAggregate.getUserTakeOrderCount();
+
+        // 判断是否有团 - teamId 为空 - 新团、为不空 - 老团
+        String teamId = payActivityEntity.getTeamId();
+        if (StringUtils.isBlank(teamId)) {
+            // 使用 RandomStringUtils.randomNumeric 替代公司里使用的雪花算法UUID
+            teamId = RandomStringUtils.randomNumeric(8);
+
+            // 构建拼团订单
+            GroupBuyOrder groupBuyOrder = GroupBuyOrder.builder()
+                    .teamId(teamId)
+                    .activityId(payActivityEntity.getActivityId())
+                    .source(payDiscountEntity.getSource())
+                    .channel(payDiscountEntity.getChannel())
+                    .originalPrice(payDiscountEntity.getOriginalPrice())
+                    .deductionPrice(payDiscountEntity.getDeductionPrice())
+                    .payPrice(payDiscountEntity.getPayPrice())
+                    .targetCount(payActivityEntity.getTargetCount())
+                    .completeCount(0)
+                    .lockCount(1)
+                    .build();
+
+            // 写入记录
+            groupBuyOrderDao.insert(groupBuyOrder);
+        } else {
+            // 更新记录 - 如果更新记录不等于1，则表示拼团已满，抛出异常
+            int updateAddTargetCount = groupBuyOrderDao.updateAddLockCount(teamId);
+            if (1 != updateAddTargetCount) {
+                throw new AppException(ResponseCode.E0005);
+            }
+        }
+
+        // 使用 RandomStringUtils.randomNumeric 替代公司里使用的雪花算法UUID
+        String orderId = RandomStringUtils.randomNumeric(12);
+        GroupBuyOrderList groupBuyOrderListReq = GroupBuyOrderList.builder()
+                .userId(userEntity.getUserId())
+                .teamId(teamId)
+                .orderId(orderId)
+                .activityId(payActivityEntity.getActivityId())
+                .startTime(payActivityEntity.getStartTime())
+                .endTime(payActivityEntity.getEndTime())
+                .goodsId(payDiscountEntity.getGoodsId())
+                .source(payDiscountEntity.getSource())
+                .channel(payDiscountEntity.getChannel())
+                .originalPrice(payDiscountEntity.getOriginalPrice())
+                .deductionPrice(payDiscountEntity.getDeductionPrice())
+                .status(TradeOrderStatusEnumVO.CREATE.getCode())
+                .outTradeNo(payDiscountEntity.getOutTradeNo())
+                // 构建 bizId 唯一值；活动id_用户id_参与次数累加
+                .bizId(payActivityEntity.getActivityId() + Constants.UNDERLINE + userEntity.getUserId() + Constants.UNDERLINE + (userTakeOrderCount + 1))
+                .build();
+        try {
+            // 写入拼团记录
+            groupBuyOrderListDao.insert(groupBuyOrderListReq);
+        } catch (DuplicateKeyException e) {
+            throw new AppException(ResponseCode.INDEX_EXCEPTION);
+        }
+
+        return MallPayOrderEntity.builder()
+                .orderId(orderId)
+                .deductionPrice(payDiscountEntity.getDeductionPrice())
+                .tradeOrderStatusEnumVO(TradeOrderStatusEnumVO.CREATE)
+                .build();
+    }
+
+    @Override
+    public GroupBuyProgressVO queryGroupBuyProgress(String teamId) {
+        GroupBuyOrder groupBuyOrder = groupBuyOrderDao.queryGroupBuyProgress(teamId);
+        if (null == groupBuyOrder) return null;
+        return GroupBuyProgressVO.builder()
+                .completeCount(groupBuyOrder.getCompleteCount())
+                .targetCount(groupBuyOrder.getTargetCount())
+                .lockCount(groupBuyOrder.getLockCount())
+                .build();
+    }
+
+    @Override
+    public GroupBuyActivityEntity queryGroupBuyActivityEntityByActivityId(Long activityId) {
+        GroupBuyActivity groupBuyActivity = groupBuyActivityDao.queryGroupBuyActivityByActivityId(activityId);
+        return GroupBuyActivityEntity.builder()
+                .activityId(groupBuyActivity.getActivityId())
+                .activityName(groupBuyActivity.getActivityName())
+                .discountId(groupBuyActivity.getDiscountId())
+                .groupType(groupBuyActivity.getGroupType())
+                .takeLimitCount(groupBuyActivity.getTakeLimitCount())
+                .target(groupBuyActivity.getTarget())
+                .validTime(groupBuyActivity.getValidTime())
+                .status(ActivityStatusEnumVO.valueOf(groupBuyActivity.getStatus()))
+                .startTime(groupBuyActivity.getStartTime())
+                .endTime(groupBuyActivity.getEndTime())
+                .tagId(groupBuyActivity.getTagId())
+                .tagScope(groupBuyActivity.getTagScope())
+                .build();
+    }
+
+    @Override
+    public Integer queryOrderCountByActivityId(Long activityId, String userId) {
+        GroupBuyOrderList groupBuyOrderListReq = new GroupBuyOrderList();
+        groupBuyOrderListReq.setActivityId(activityId);
+        groupBuyOrderListReq.setUserId(userId);
+        return groupBuyOrderListDao.queryOrderCountByActivityId(groupBuyOrderListReq);
+    }
+
+
 }

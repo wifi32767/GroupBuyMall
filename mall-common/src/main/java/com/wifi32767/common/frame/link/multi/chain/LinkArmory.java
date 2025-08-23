@@ -13,7 +13,7 @@ public class LinkArmory<T, D, R> {
     @SafeVarargs
     public LinkArmory(String linkName, LogicHandler<T, D, R>... logicHandlers) {
         logicLink = new BusinessLinkedList<>(linkName);
-        for (LogicHandler<T, D, R> logicHandler: logicHandlers){
+        for (LogicHandler<T, D, R> logicHandler : logicHandlers) {
             logicLink.add(logicHandler);
         }
     }
