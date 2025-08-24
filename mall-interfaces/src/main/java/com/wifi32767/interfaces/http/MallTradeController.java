@@ -8,16 +8,18 @@ import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 import com.wifi32767.domain.activity.service.IndexGroupBuyMallService;
 import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
+import com.wifi32767.domain.trade.model.entity.TradePaySettlementEntity;
+import com.wifi32767.domain.trade.model.entity.TradePaySuccessEntity;
 import com.wifi32767.domain.trade.service.TradeLockOrderService;
+import com.wifi32767.domain.trade.service.settlement.TradeSettlementOrderService;
 import com.wifi32767.interfaces.dto.LockMallPayOrderRequestDTO;
 import com.wifi32767.interfaces.dto.LockMallPayOrderResponseDTO;
+import com.wifi32767.interfaces.dto.SettlementMallPayOrderRequestDTO;
+import com.wifi32767.interfaces.dto.SettlementMallPayOrderResponseDTO;
 import com.wifi32767.interfaces.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -33,24 +35,26 @@ public class MallTradeController {
 
     @Resource
     private TradeLockOrderService tradeLockOrderService;
+    @Resource
+    private TradeSettlementOrderService tradeSettlementOrderService;
 
     /**
      * 拼团营销锁单
      */
     @RequestMapping(value = "lock_mall_pay_order", method = RequestMethod.POST)
-    public Response<LockMallPayOrderResponseDTO> lockMallPayOrder(LockMallPayOrderRequestDTO lockMallPayOrderRequestDTO) {
+    public Response<LockMallPayOrderResponseDTO> lockMallPayOrder(LockMallPayOrderRequestDTO requestDTO) {
         try {
             // 参数
-            String userId = lockMallPayOrderRequestDTO.getUserId();
-            String source = lockMallPayOrderRequestDTO.getSource();
-            String channel = lockMallPayOrderRequestDTO.getChannel();
-            String goodsId = lockMallPayOrderRequestDTO.getGoodsId();
-            Long activityId = lockMallPayOrderRequestDTO.getActivityId();
-            String outTradeNo = lockMallPayOrderRequestDTO.getOutTradeNo();
-            String teamId = lockMallPayOrderRequestDTO.getTeamId();
-            String notifyUrl = lockMallPayOrderRequestDTO.getNotifyUrl();
+            String userId = requestDTO.getUserId();
+            String source = requestDTO.getSource();
+            String channel = requestDTO.getChannel();
+            String goodsId = requestDTO.getGoodsId();
+            Long activityId = requestDTO.getActivityId();
+            String outTradeNo = requestDTO.getOutTradeNo();
+            String teamId = requestDTO.getTeamId();
+            String notifyUrl = requestDTO.getNotifyUrl();
 
-            log.info("营销交易锁单:{} LockMallPayOrderRequestDTO:{}", userId, JSON.toJSONString(lockMallPayOrderRequestDTO));
+            log.info("营销交易锁单:{} LockMallPayOrderRequestDTO:{}", userId, JSON.toJSONString(requestDTO));
 
             if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId || StringUtils.isBlank(notifyUrl)) {
                 return Response.<LockMallPayOrderResponseDTO>builder()
@@ -77,7 +81,7 @@ public class MallTradeController {
             }
 
             // 判断拼团锁单是否完成了目标
-            if (null != teamId) {
+            if (!StringUtils.isBlank(teamId)) {
                 GroupBuyProgressVO groupBuyProgressVO = tradeLockOrderService.queryGroupBuyProgress(teamId);
                 if (null != groupBuyProgressVO && Objects.equals(groupBuyProgressVO.getTargetCount(), groupBuyProgressVO.getLockCount())) {
                     log.info("交易锁单拦截-拼单目标已达成:{} {}", userId, teamId);
@@ -143,14 +147,67 @@ public class MallTradeController {
                             .build())
                     .build();
         } catch (AppException e) {
-            log.error("营销交易锁单业务异常:{} LockMallPayOrderRequestDTO:{}", lockMallPayOrderRequestDTO.getUserId(), JSON.toJSONString(lockMallPayOrderRequestDTO), e);
+            log.error("营销交易锁单业务异常:{} LockMallPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
             return Response.<LockMallPayOrderResponseDTO>builder()
                     .code(e.getCode())
                     .info(e.getInfo())
                     .build();
         } catch (Exception e) {
-            log.error("营销交易锁单服务失败:{} LockMallPayOrderRequestDTO:{}", lockMallPayOrderRequestDTO.getUserId(), JSON.toJSONString(lockMallPayOrderRequestDTO), e);
+            log.error("营销交易锁单服务失败:{} LockMallPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
             return Response.<LockMallPayOrderResponseDTO>builder()
+                    .code(ResponseCode.UN_ERROR.getCode())
+                    .info(ResponseCode.UN_ERROR.getInfo())
+                    .build();
+        }
+    }
+
+    @RequestMapping(value = "settlement_mall_pay_order", method = RequestMethod.POST)
+    public Response<SettlementMallPayOrderResponseDTO> settlementMallPayOrder(@RequestBody SettlementMallPayOrderRequestDTO requestDTO) {
+        try {
+            log.info("营销交易组队结算开始:{} outTradeNo:{}", requestDTO.getUserId(), requestDTO.getOutTradeNo());
+
+            if (StringUtils.isBlank(requestDTO.getUserId()) || StringUtils.isBlank(requestDTO.getSource()) || StringUtils.isBlank(requestDTO.getChannel()) || StringUtils.isBlank(requestDTO.getOutTradeNo()) || null == requestDTO.getOutTradeTime()) {
+                return Response.<SettlementMallPayOrderResponseDTO>builder()
+                        .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
+                        .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
+                        .build();
+            }
+
+            // 1. 结算服务
+            TradePaySettlementEntity tradePaySettlementEntity = tradeSettlementOrderService.settlementMallPayOrder(TradePaySuccessEntity.builder()
+                    .source(requestDTO.getSource())
+                    .channel(requestDTO.getChannel())
+                    .userId(requestDTO.getUserId())
+                    .outTradeNo(requestDTO.getOutTradeNo())
+                    .outTradeTime(requestDTO.getOutTradeTime())
+                    .build());
+
+            SettlementMallPayOrderResponseDTO responseDTO = SettlementMallPayOrderResponseDTO.builder()
+                    .userId(tradePaySettlementEntity.getUserId())
+                    .teamId(tradePaySettlementEntity.getTeamId())
+                    .activityId(tradePaySettlementEntity.getActivityId())
+                    .outTradeNo(tradePaySettlementEntity.getOutTradeNo())
+                    .build();
+
+            // 返回结果
+            Response<SettlementMallPayOrderResponseDTO> response = Response.<SettlementMallPayOrderResponseDTO>builder()
+                    .code(ResponseCode.SUCCESS.getCode())
+                    .info(ResponseCode.SUCCESS.getInfo())
+                    .data(responseDTO)
+                    .build();
+
+            log.info("营销交易组队结算完成:{} outTradeNo:{} response:{}", requestDTO.getUserId(), requestDTO.getOutTradeNo(), JSON.toJSONString(response));
+
+            return response;
+        } catch (AppException e) {
+            log.error("营销交易组队结算异常:{} LockMallPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
+            return Response.<SettlementMallPayOrderResponseDTO>builder()
+                    .code(e.getCode())
+                    .info(e.getInfo())
+                    .build();
+        } catch (Exception e) {
+            log.error("营销交易组队结算失败:{} LockMallPayOrderRequestDTO:{}", requestDTO.getUserId(), JSON.toJSONString(requestDTO), e);
+            return Response.<SettlementMallPayOrderResponseDTO>builder()
                     .code(ResponseCode.UN_ERROR.getCode())
                     .info(ResponseCode.UN_ERROR.getInfo())
                     .build();

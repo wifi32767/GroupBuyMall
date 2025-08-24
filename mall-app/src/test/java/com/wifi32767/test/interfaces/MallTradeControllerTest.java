@@ -53,4 +53,24 @@ public class MallTradeControllerTest {
         log.info("测试结果 req:{} res:{}", JSON.toJSONString(lockMallPayOrderRequestDTO), JSON.toJSONString(lockMallPayOrderResponseDTOResponse));
     }
 
+    @Test
+    public void test_lockMallPayOrder_list() {
+        for (int i = 1; i < 10; i++) {
+            LockMallPayOrderRequestDTO lockMallPayOrderRequestDTO = new LockMallPayOrderRequestDTO();
+            lockMallPayOrderRequestDTO.setUserId("xfg0" + i);
+            lockMallPayOrderRequestDTO.setTeamId(null);
+            lockMallPayOrderRequestDTO.setActivityId(100123L);
+            lockMallPayOrderRequestDTO.setGoodsId("9890001");
+            lockMallPayOrderRequestDTO.setSource("s01");
+            lockMallPayOrderRequestDTO.setChannel("c01");
+            lockMallPayOrderRequestDTO.setNotifyUrl("http://127.0.0.1:8091/api/v1/test/group_buy_notify");
+            lockMallPayOrderRequestDTO.setOutTradeNo(RandomStringUtils.randomNumeric(12));
+
+            Response<LockMallPayOrderResponseDTO> lockMallPayOrderResponseDTOResponse = mallTradeController.lockMallPayOrder(lockMallPayOrderRequestDTO);
+
+            log.info("测试结果 req:{} res:{}", JSON.toJSONString(lockMallPayOrderRequestDTO), JSON.toJSONString(lockMallPayOrderResponseDTOResponse));
+        }
+
+    }
+
 }

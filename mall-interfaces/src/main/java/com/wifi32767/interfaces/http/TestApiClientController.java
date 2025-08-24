@@ -4,10 +4,7 @@ package com.wifi32767.interfaces.http;
 import com.alibaba.fastjson.JSON;
 import com.wifi32767.interfaces.dto.NotifyRequestDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @description 回调服务接口测试
