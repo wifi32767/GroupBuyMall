@@ -23,4 +23,6 @@ public interface TradeRepository {
 
     void settlementMallPayOrder(GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate);
 
+    boolean isSCBlackIntercept(String source, String channel);
+
 }

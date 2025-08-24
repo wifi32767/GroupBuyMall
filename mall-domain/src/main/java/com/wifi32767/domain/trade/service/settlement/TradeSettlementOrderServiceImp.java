@@ -1,13 +1,12 @@
 package com.wifi32767.domain.trade.service.settlement;
 
 
-import com.wifi32767.domain.activity.model.entity.MallPayOrderEntity;
+import com.wifi32767.common.frame.link.multi.chain.BusinessLinkedList;
 import com.wifi32767.domain.activity.model.entity.UserEntity;
 import com.wifi32767.domain.trade.adapter.repository.TradeRepository;
 import com.wifi32767.domain.trade.model.aggregate.GroupBuyTeamSettlementAggregate;
-import com.wifi32767.domain.trade.model.entity.GroupBuyTeamEntity;
-import com.wifi32767.domain.trade.model.entity.TradePaySettlementEntity;
-import com.wifi32767.domain.trade.model.entity.TradePaySuccessEntity;
+import com.wifi32767.domain.trade.model.entity.*;
+import com.wifi32767.domain.trade.service.settlement.factory.TradeSettlementRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +18,36 @@ public class TradeSettlementOrderServiceImp implements TradeSettlementOrderServi
 
     @Resource
     private TradeRepository repository;
+    @Resource
+    private BusinessLinkedList<TradeSettlementRuleCommandEntity, TradeSettlementRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity> tradeSettlementRuleFilter;
 
     @Override
-    public TradePaySettlementEntity settlementMallPayOrder(TradePaySuccessEntity tradePaySuccessEntity) {
+    public TradePaySettlementEntity settlementMallPayOrder(TradePaySuccessEntity tradePaySuccessEntity) throws Exception {
         log.info("拼团交易-支付订单结算:{} outTradeNo:{}", tradePaySuccessEntity.getUserId(), tradePaySuccessEntity.getOutTradeNo());
-        // 1. 查询拼团信息
-        MallPayOrderEntity mallPayOrderEntity = repository.queryMallPayOrderEntityByOutTradeNo(tradePaySuccessEntity.getUserId(), tradePaySuccessEntity.getOutTradeNo());
-        if (null == mallPayOrderEntity) {
-            log.info("不存在的外部交易单号或用户已退单，不需要做支付订单结算:{} outTradeNo:{}", tradePaySuccessEntity.getUserId(), tradePaySuccessEntity.getOutTradeNo());
-            return null;
-        }
+        // 1. 结算规则过滤
+        TradeSettlementRuleFilterBackEntity tradeSettlementRuleFilterBackEntity = tradeSettlementRuleFilter.apply(
+                TradeSettlementRuleCommandEntity.builder()
+                        .source(tradePaySuccessEntity.getSource())
+                        .channel(tradePaySuccessEntity.getChannel())
+                        .userId(tradePaySuccessEntity.getUserId())
+                        .outTradeNo(tradePaySuccessEntity.getOutTradeNo())
+                        .outTradeTime(tradePaySuccessEntity.getOutTradeTime())
+                        .build(),
+                new TradeSettlementRuleFilterFactory.DynamicContext());
+
+        String teamId = tradeSettlementRuleFilterBackEntity.getTeamId();
 
         // 2. 查询组团信息
-        GroupBuyTeamEntity groupBuyTeamEntity = repository.queryGroupBuyTeamByTeamId(mallPayOrderEntity.getTeamId());
+        GroupBuyTeamEntity groupBuyTeamEntity = GroupBuyTeamEntity.builder()
+                .teamId(tradeSettlementRuleFilterBackEntity.getTeamId())
+                .activityId(tradeSettlementRuleFilterBackEntity.getActivityId())
+                .targetCount(tradeSettlementRuleFilterBackEntity.getTargetCount())
+                .completeCount(tradeSettlementRuleFilterBackEntity.getCompleteCount())
+                .lockCount(tradeSettlementRuleFilterBackEntity.getLockCount())
+                .status(tradeSettlementRuleFilterBackEntity.getStatus())
+                .validStartTime(tradeSettlementRuleFilterBackEntity.getValidStartTime())
+                .validEndTime(tradeSettlementRuleFilterBackEntity.getValidEndTime())
+                .build();
 
         // 3. 构建聚合对象
         GroupBuyTeamSettlementAggregate groupBuyTeamSettlementAggregate = GroupBuyTeamSettlementAggregate.builder()
@@ -48,7 +64,7 @@ public class TradeSettlementOrderServiceImp implements TradeSettlementOrderServi
                 .source(tradePaySuccessEntity.getSource())
                 .channel(tradePaySuccessEntity.getChannel())
                 .userId(tradePaySuccessEntity.getUserId())
-                .teamId(mallPayOrderEntity.getTeamId())
+                .teamId(teamId)
                 .activityId(groupBuyTeamEntity.getActivityId())
                 .outTradeNo(tradePaySuccessEntity.getOutTradeNo())
                 .build();

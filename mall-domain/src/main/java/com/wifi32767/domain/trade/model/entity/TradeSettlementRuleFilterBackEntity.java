@@ -1,5 +1,6 @@
 package com.wifi32767.domain.trade.model.entity;
 
+
 import com.wifi32767.common.enums.GroupBuyOrderEnumVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,11 +9,15 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ * @description 拼团交易结算规则反馈
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupBuyTeamEntity {
+public class TradeSettlementRuleFilterBackEntity {
+
     /**
      * 拼单组队ID
      */
@@ -45,4 +50,5 @@ public class GroupBuyTeamEntity {
      * 拼团结束时间 - 拼团有效时长
      */
     private Date validEndTime;
+
 }

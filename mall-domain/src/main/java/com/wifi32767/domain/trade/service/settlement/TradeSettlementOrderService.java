@@ -13,6 +13,6 @@ public interface TradeSettlementOrderService {
      * @param tradePaySuccessEntity 交易支付订单实体对象
      * @return 交易结算订单实体
      */
-    TradePaySettlementEntity settlementMallPayOrder(TradePaySuccessEntity tradePaySuccessEntity);
+    TradePaySettlementEntity settlementMallPayOrder(TradePaySuccessEntity tradePaySuccessEntity) throws Exception;
 
 }

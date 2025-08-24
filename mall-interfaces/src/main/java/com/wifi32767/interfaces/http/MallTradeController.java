@@ -80,8 +80,8 @@ public class MallTradeController {
                 if (null != groupBuyProgressVO && Objects.equals(groupBuyProgressVO.getTargetCount(), groupBuyProgressVO.getLockCount())) {
                     log.info("交易锁单拦截-拼单目标已达成:{} {}", userId, teamId);
                     return Response.<LockMallPayOrderResponseDTO>builder()
-                            .code(ResponseCode.E0006.getCode())
-                            .info(ResponseCode.E0006.getInfo())
+                            .code(ResponseCode.E006.getCode())
+                            .info(ResponseCode.E006.getInfo())
                             .build();
                 }
             }
@@ -97,8 +97,8 @@ public class MallTradeController {
             // 人群限定
             if (!trialBalanceEntity.getIsVisible() || !trialBalanceEntity.getIsEnable()) {
                 return Response.<LockMallPayOrderResponseDTO>builder()
-                        .code(ResponseCode.E0007.getCode())
-                        .info(ResponseCode.E0007.getInfo())
+                        .code(ResponseCode.E007.getCode())
+                        .info(ResponseCode.E007.getInfo())
                         .build();
             }
 
@@ -113,6 +113,7 @@ public class MallTradeController {
                             .activityName(groupBuyActivityDiscountVO.getActivityName())
                             .startTime(groupBuyActivityDiscountVO.getStartTime())
                             .endTime(groupBuyActivityDiscountVO.getEndTime())
+                            .validTime(groupBuyActivityDiscountVO.getValidTime())
                             .targetCount(groupBuyActivityDiscountVO.getTarget())
                             .build(),
                     PayDiscountEntity.builder()

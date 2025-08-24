@@ -33,13 +33,13 @@ public class SwitchNode extends AbstractGroupBuyMallSupport<MallProductEntity, D
         // 判断是否降级
         if (repository.downgradeSwitch()) {
             log.info("拼团活动降级拦截 {}", userId);
-            throw new AppException(ResponseCode.E0003.getCode(), ResponseCode.E0003.getInfo());
+            throw new AppException(ResponseCode.E003.getCode(), ResponseCode.E003.getInfo());
         }
 
         // 切量范围判断
         if (!repository.cutRange(userId)) {
             log.info("拼团活动切量拦截 {}", userId);
-            throw new AppException(ResponseCode.E0004.getCode(), ResponseCode.E0004.getInfo());
+            throw new AppException(ResponseCode.E004.getCode(), ResponseCode.E004.getInfo());
         }
         return router(requestParameter, dynamicContext);
     }
