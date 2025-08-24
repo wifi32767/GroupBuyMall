@@ -7,6 +7,7 @@ import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 import com.wifi32767.domain.activity.service.IndexGroupBuyMallService;
+import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
 import com.wifi32767.domain.trade.service.TradeLockOrderService;
 import com.wifi32767.interfaces.dto.LockMallPayOrderRequestDTO;
 import com.wifi32767.interfaces.dto.LockMallPayOrderResponseDTO;
@@ -47,10 +48,11 @@ public class MallTradeController {
             Long activityId = lockMallPayOrderRequestDTO.getActivityId();
             String outTradeNo = lockMallPayOrderRequestDTO.getOutTradeNo();
             String teamId = lockMallPayOrderRequestDTO.getTeamId();
+            String notifyUrl = lockMallPayOrderRequestDTO.getNotifyUrl();
 
             log.info("营销交易锁单:{} LockMallPayOrderRequestDTO:{}", userId, JSON.toJSONString(lockMallPayOrderRequestDTO));
 
-            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId) {
+            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId || StringUtils.isBlank(notifyUrl)) {
                 return Response.<LockMallPayOrderResponseDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
@@ -125,6 +127,7 @@ public class MallTradeController {
                             .deductionPrice(trialBalanceEntity.getDeductionPrice())
                             .payPrice(trialBalanceEntity.getPayPrice())
                             .outTradeNo(outTradeNo)
+                            .notifyUrl(notifyUrl)
                             .build());
 
             log.info("交易锁单记录(新):{} mallPayOrderEntity:{}", userId, JSON.toJSONString(mallPayOrderEntity));

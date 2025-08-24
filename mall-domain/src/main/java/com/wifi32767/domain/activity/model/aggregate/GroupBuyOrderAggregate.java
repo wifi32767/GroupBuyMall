@@ -1,8 +1,8 @@
 package com.wifi32767.domain.activity.model.aggregate;
 
 import com.wifi32767.domain.activity.model.entity.PayActivityEntity;
-import com.wifi32767.domain.activity.model.entity.PayDiscountEntity;
 import com.wifi32767.domain.activity.model.entity.UserEntity;
+import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

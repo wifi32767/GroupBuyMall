@@ -5,6 +5,7 @@ import com.wifi32767.domain.activity.model.aggregate.GroupBuyOrderAggregate;
 import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 import com.wifi32767.domain.trade.adapter.repository.TradeRepository;
+import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
 import com.wifi32767.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

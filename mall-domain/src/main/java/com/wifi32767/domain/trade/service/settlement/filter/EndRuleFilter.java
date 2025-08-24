@@ -32,6 +32,7 @@ public class EndRuleFilter implements LogicHandler<TradeSettlementRuleCommandEnt
                 .status(groupBuyTeamEntity.getStatus())
                 .validStartTime(groupBuyTeamEntity.getValidStartTime())
                 .validEndTime(groupBuyTeamEntity.getValidEndTime())
+                .notifyUrl(groupBuyTeamEntity.getNotifyUrl())
                 .build();
     }
 

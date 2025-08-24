@@ -1,4 +1,4 @@
-package com.wifi32767.domain.activity.model.entity;
+package com.wifi32767.domain.trade.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -45,5 +45,9 @@ public class PayDiscountEntity {
      * 外部交易单号-确保外部调用唯一幂等
      */
     private String outTradeNo;
+    /**
+     * 回调地址
+     */
+    private String notifyUrl;
 
 }

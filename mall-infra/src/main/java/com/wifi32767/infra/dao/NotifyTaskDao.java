@@ -14,10 +14,10 @@ public interface NotifyTaskDao {
 
     NotifyTask queryUnExecutedNotifyTaskByTeamId(String teamId);
 
-    int updateNotifyTaskStatusSuccess(NotifyTask notifyTask);
+    int updateNotifyTaskStatusSuccess(String teamId);
 
-    int updateNotifyTaskStatusError(NotifyTask notifyTask);
+    int updateNotifyTaskStatusError(String teamId);
 
-    int updateNotifyTaskStatusRetry(NotifyTask notifyTask);
+    int updateNotifyTaskStatusRetry(String teamId);
 
 }

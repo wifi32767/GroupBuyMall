@@ -26,62 +26,41 @@
     </insert>
 
     <select id="queryUnExecutedNotifyTaskList" resultMap="dataMap">
-        select activity_id,
-               team_id,
-               notify_category,
-               notify_type,
-               notify_mq,
-               notify_url,
-               notify_count,
-               notify_status,
-               parameter_json,
-               uuid
+        select activity_id, team_id, notify_url, notify_count, notify_status, parameter_json
         from notify_task
         where notify_status in (0, 2)
         limit 50
     </select>
 
     <select id="queryUnExecutedNotifyTaskByTeamId" resultMap="dataMap">
-        select activity_id,
-               team_id,
-               notify_category,
-               notify_type,
-               notify_mq,
-               notify_url,
-               notify_count,
-               notify_status,
-               parameter_json,
-               uuid
+        select activity_id, team_id, notify_url, notify_count, notify_status, parameter_json
         from notify_task
         where team_id = #{teamId}
           and notify_status in (0, 2)
     </select>
 
-    <update id="updateNotifyTaskStatusSuccess" parameterType="com.wifi32767.infra.dao.po.NotifyTask">
+    <update id="updateNotifyTaskStatusSuccess" parameterType="java.lang.String">
         update notify_task
         set notify_count  = notify_count + 1,
             notify_status = 1,
             update_time   = now()
         where team_id = #{teamId}
-          and uuid = #{uuid}
     </update>
 
-    <update id="updateNotifyTaskStatusError" parameterType="com.wifi32767.infra.dao.po.NotifyTask">
+    <update id="updateNotifyTaskStatusError" parameterType="java.lang.String">
         update notify_task
         set notify_count  = notify_count + 1,
             notify_status = 3,
             update_time   = now()
         where team_id = #{teamId}
-          and uuid = #{uuid}
     </update>
 
-    <update id="updateNotifyTaskStatusRetry" parameterType="com.wifi32767.infra.dao.po.NotifyTask">
+    <update id="updateNotifyTaskStatusRetry" parameterType="java.lang.String">
         update notify_task
         set notify_count  = notify_count + 1,
             notify_status = 2,
             update_time   = now()
         where team_id = #{teamId}
-          and uuid = #{uuid}
     </update>
 
 </mapper>

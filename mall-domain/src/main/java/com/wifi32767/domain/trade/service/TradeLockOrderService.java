@@ -2,9 +2,9 @@ package com.wifi32767.domain.trade.service;
 
 import com.wifi32767.domain.activity.model.entity.MallPayOrderEntity;
 import com.wifi32767.domain.activity.model.entity.PayActivityEntity;
-import com.wifi32767.domain.activity.model.entity.PayDiscountEntity;
 import com.wifi32767.domain.activity.model.entity.UserEntity;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
+import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
 
 /**
  * @description 交易订单服务接口
