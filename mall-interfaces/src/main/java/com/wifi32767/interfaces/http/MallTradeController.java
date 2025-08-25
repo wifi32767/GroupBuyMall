@@ -6,6 +6,8 @@ import com.wifi32767.common.exceptions.AppException;
 import com.wifi32767.domain.activity.model.entity.*;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyActivityDiscountVO;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
+import com.wifi32767.domain.activity.model.valobject.NotifyConfigVO;
+import com.wifi32767.domain.activity.model.valobject.NotifyTypeEnumVO;
 import com.wifi32767.domain.activity.service.IndexGroupBuyMallService;
 import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
 import com.wifi32767.domain.trade.model.entity.TradePaySettlementEntity;
@@ -52,11 +54,11 @@ public class MallTradeController {
             Long activityId = requestDTO.getActivityId();
             String outTradeNo = requestDTO.getOutTradeNo();
             String teamId = requestDTO.getTeamId();
-            String notifyUrl = requestDTO.getNotifyUrl();
+            LockMallPayOrderRequestDTO.NotifyConfigVO notifyConfigVO = requestDTO.getNotifyConfigVO();
 
             log.info("营销交易锁单:{} LockMallPayOrderRequestDTO:{}", userId, JSON.toJSONString(requestDTO));
 
-            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId || StringUtils.isBlank(notifyUrl)) {
+            if (StringUtils.isBlank(userId) || StringUtils.isBlank(source) || StringUtils.isBlank(channel) || StringUtils.isBlank(goodsId) || StringUtils.isBlank(goodsId) || null == activityId || StringUtils.isBlank(notifyConfigVO.getNotifyUrl()) && "HTTP".equals(notifyConfigVO.getNotifyType())) {
                 return Response.<LockMallPayOrderResponseDTO>builder()
                         .code(ResponseCode.ILLEGAL_PARAMETER.getCode())
                         .info(ResponseCode.ILLEGAL_PARAMETER.getInfo())
@@ -131,7 +133,13 @@ public class MallTradeController {
                             .deductionPrice(trialBalanceEntity.getDeductionPrice())
                             .payPrice(trialBalanceEntity.getPayPrice())
                             .outTradeNo(outTradeNo)
-                            .notifyUrl(notifyUrl)
+                            .notifyConfigVO(
+                                    // 构建回调通知对象
+                                    NotifyConfigVO.builder()
+                                            .notifyType(NotifyTypeEnumVO.valueOf(notifyConfigVO.getNotifyType()))
+                                            .notifyTag(notifyConfigVO.getNotifyTag())
+                                            .notifyUrl(notifyConfigVO.getNotifyUrl())
+                                            .build())
                             .build());
 
             log.info("交易锁单记录(新):{} mallPayOrderEntity:{}", userId, JSON.toJSONString(mallPayOrderEntity));

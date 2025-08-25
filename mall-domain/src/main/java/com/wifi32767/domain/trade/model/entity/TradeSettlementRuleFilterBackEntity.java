@@ -2,6 +2,7 @@ package com.wifi32767.domain.trade.model.entity;
 
 
 import com.wifi32767.common.enums.GroupBuyOrderEnumVO;
+import com.wifi32767.domain.activity.model.valobject.NotifyConfigVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,5 +55,9 @@ public class TradeSettlementRuleFilterBackEntity {
      * 回调地址
      */
     private String notifyUrl;
+    /**
+     * 回调配置
+     */
+    private NotifyConfigVO notifyConfigVO;
 
 }

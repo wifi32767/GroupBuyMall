@@ -35,6 +35,7 @@
         <redisson.version>3.26.0</redisson.version>
         <apache.commons-lang3.version>3.13.0</apache.commons-lang3.version>
         <okhttp.version>3.14.9</okhttp.version>
+        <rocketmq.version>2.2.3</rocketmq.version>
     </properties>
 
     <dependencyManagement>
@@ -83,6 +84,11 @@
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>logging-interceptor</artifactId>
                 <version>${okhttp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

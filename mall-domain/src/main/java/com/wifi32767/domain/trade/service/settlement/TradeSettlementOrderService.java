@@ -1,5 +1,6 @@
 package com.wifi32767.domain.trade.service.settlement;
 
+import com.wifi32767.domain.trade.model.entity.NotifyTaskEntity;
 import com.wifi32767.domain.trade.model.entity.TradePaySettlementEntity;
 import com.wifi32767.domain.trade.model.entity.TradePaySuccessEntity;
 
@@ -33,5 +34,14 @@ public interface TradeSettlementOrderService {
      * @throws Exception 异常
      */
     Map<String, Integer> execSettlementNotifyJob(String teamId) throws Exception;
+
+    /**
+     * 执行结算通知任务
+     *
+     * @param notifyTaskEntity 通知任务对象
+     * @return 结算数量
+     * @throws Exception 异常
+     */
+    Map<String, Integer> execSettlementNotifyJob(NotifyTaskEntity notifyTaskEntity) throws Exception;
 
 }
