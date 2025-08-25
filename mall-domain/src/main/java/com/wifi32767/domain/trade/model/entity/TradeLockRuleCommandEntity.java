@@ -1,4 +1,4 @@
-package com.wifi32767.domain.activity.model.entity;
+package com.wifi32767.domain.trade.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +23,8 @@ public class TradeLockRuleCommandEntity {
      */
     private Long activityId;
 
+    /**
+     * 组队ID
+     */
+    private String teamId;
 }

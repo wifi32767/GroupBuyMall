@@ -1,4 +1,4 @@
-package com.wifi32767.domain.activity.model.entity;
+package com.wifi32767.domain.trade.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,5 +16,7 @@ public class TradeLockRuleFilterBackEntity {
 
     // 用户参与活动的订单量
     private Integer userTakeOrderCount;
+    // 恢复组队库存缓存key
+    private String recoveryTeamStockKey;
 
 }

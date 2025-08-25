@@ -2,10 +2,14 @@ package com.wifi32767.domain.trade.service;
 
 import com.wifi32767.common.frame.link.multi.chain.BusinessLinkedList;
 import com.wifi32767.domain.activity.model.aggregate.GroupBuyOrderAggregate;
-import com.wifi32767.domain.activity.model.entity.*;
+import com.wifi32767.domain.activity.model.entity.MallPayOrderEntity;
+import com.wifi32767.domain.activity.model.entity.PayActivityEntity;
+import com.wifi32767.domain.activity.model.entity.UserEntity;
 import com.wifi32767.domain.activity.model.valobject.GroupBuyProgressVO;
 import com.wifi32767.domain.trade.adapter.repository.TradeRepository;
 import com.wifi32767.domain.trade.model.entity.PayDiscountEntity;
+import com.wifi32767.domain.trade.model.entity.TradeLockRuleCommandEntity;
+import com.wifi32767.domain.trade.model.entity.TradeSettlementRuleFilterBackEntity;
 import com.wifi32767.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +24,7 @@ public class TradeLockOrderServiceImp implements TradeLockOrderService {
     private TradeRepository repository;
 
     @Resource
-    private BusinessLinkedList<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> tradeRuleFilter;
+    private BusinessLinkedList<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity.TradeLockRuleFilterBackEntity> tradeRuleFilter;
 
     @Override
     public MallPayOrderEntity queryNoPayMallPayOrderByOutTradeNo(String userId, String outTradeNo) {
@@ -38,9 +42,10 @@ public class TradeLockOrderServiceImp implements TradeLockOrderService {
     public MallPayOrderEntity lockMallPayOrder(UserEntity userEntity, PayActivityEntity payActivityEntity, PayDiscountEntity payDiscountEntity) throws Exception {
         log.info("拼团交易-锁定营销优惠支付订单:{} activityId:{} goodsId:{}", userEntity.getUserId(), payActivityEntity.getActivityId(), payDiscountEntity.getGoodsId());
         // 交易规则过滤
-        TradeLockRuleFilterBackEntity tradeLockRuleFilterBackEntity = tradeRuleFilter.apply(TradeLockRuleCommandEntity.builder()
+        TradeSettlementRuleFilterBackEntity.TradeLockRuleFilterBackEntity tradeLockRuleFilterBackEntity = tradeRuleFilter.apply(TradeLockRuleCommandEntity.builder()
                         .activityId(payActivityEntity.getActivityId())
                         .userId(userEntity.getUserId())
+                        .teamId(payActivityEntity.getTeamId())
                         .build(),
                 new TradeLockRuleFilterFactory.DynamicContext());
 
@@ -55,8 +60,15 @@ public class TradeLockOrderServiceImp implements TradeLockOrderService {
                 .userTakeOrderCount(userTakeOrderCount)
                 .build();
 
-        // 锁定聚合订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
-        return repository.lockMallPayOrder(groupBuyOrderAggregate);
+        try {
+            // 锁定聚合订单 - 这会用户只是下单还没有支付。后续会有2个流程；支付成功、超时未支付（回退）
+            return repository.lockMallPayOrder(groupBuyOrderAggregate);
+        } catch (Exception e) {
+            // 记录失败恢复量
+            repository.recoveryTeamStock(tradeLockRuleFilterBackEntity.getRecoveryTeamStockKey(), payActivityEntity.getValidTime());
+            throw e;
+        }
+
     }
 
 }

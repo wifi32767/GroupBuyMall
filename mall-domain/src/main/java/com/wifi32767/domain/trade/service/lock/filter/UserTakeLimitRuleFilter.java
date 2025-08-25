@@ -4,9 +4,9 @@ import com.wifi32767.common.enums.ResponseCode;
 import com.wifi32767.common.exceptions.AppException;
 import com.wifi32767.common.frame.link.multi.handler.LogicHandler;
 import com.wifi32767.domain.activity.model.entity.GroupBuyActivityEntity;
-import com.wifi32767.domain.activity.model.entity.TradeLockRuleCommandEntity;
-import com.wifi32767.domain.activity.model.entity.TradeLockRuleFilterBackEntity;
 import com.wifi32767.domain.trade.adapter.repository.TradeRepository;
+import com.wifi32767.domain.trade.model.entity.TradeSettlementRuleCommandEntity;
+import com.wifi32767.domain.trade.model.entity.TradeSettlementRuleFilterBackEntity;
 import com.wifi32767.domain.trade.service.lock.factory.TradeLockRuleFilterFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,13 +18,13 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Service
-public class UserTakeLimitRuleFilter implements LogicHandler<TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeLockRuleFilterBackEntity> {
+public class UserTakeLimitRuleFilter implements LogicHandler<TradeSettlementRuleCommandEntity.TradeLockRuleCommandEntity, TradeLockRuleFilterFactory.DynamicContext, TradeSettlementRuleFilterBackEntity.TradeLockRuleFilterBackEntity> {
 
     @Resource
     private TradeRepository repository;
 
     @Override
-    public TradeLockRuleFilterBackEntity apply(TradeLockRuleCommandEntity requestParameter, TradeLockRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
+    public TradeSettlementRuleFilterBackEntity.TradeLockRuleFilterBackEntity apply(TradeSettlementRuleCommandEntity.TradeLockRuleCommandEntity requestParameter, TradeLockRuleFilterFactory.DynamicContext dynamicContext) throws Exception {
         log.info("交易规则过滤-用户参与次数校验{} activityId:{}", requestParameter.getUserId(), requestParameter.getActivityId());
 
         GroupBuyActivityEntity groupBuyActivity = dynamicContext.getGroupBuyActivity();
@@ -37,9 +37,10 @@ public class UserTakeLimitRuleFilter implements LogicHandler<TradeLockRuleComman
             throw new AppException(ResponseCode.E103);
         }
 
-        return TradeLockRuleFilterBackEntity.builder()
-                .userTakeOrderCount(count)
-                .build();
+        dynamicContext.setUserTakeOrderCount(count);
+
+        return next(requestParameter, dynamicContext);
+
     }
 
 }
